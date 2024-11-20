@@ -23,7 +23,7 @@ def main():
         """Función que convierte de imagen a texto"""
         
         # Cargar modelo de Hugging Face
-        modelName = "Luna288/image-captioning-clothes"
+        modelName = "Luna288/image2text_fashion"
         processor = BlipProcessor.from_pretrained(modelName)
         model = BlipForConditionalGeneration.from_pretrained(modelName)
     
