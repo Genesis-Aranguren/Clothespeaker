@@ -6,9 +6,9 @@ import torch
 
 # Configuración
 modelName = "Salesforce/blip-image-captioning-base"
-lr = 1e-5
-batchSize = 2
-epoch = 20
+lr = 5e-5
+batchSize = 7
+epoch = 30
 
 # Carga del modelo, procesador y optimizador
 processor = AutoProcessor.from_pretrained(modelName)
@@ -30,15 +30,15 @@ class ClothesDataset(Dataset):
         encoding = {k:v.squeeze() for k,v in encoding.items()}
         return encoding
 
-dataset = load_dataset("Luna288/image-captioning-FACAD-small", split="train")
+dataset = load_dataset("Luna288/image-captioning-FACAD-1000", split="train")
 train = ClothesDataset(dataset, processor)
 train = DataLoader(train, shuffle=True, batch_size=batchSize)
 
 # Configuración del scheduler
 lr_scheduler = get_scheduler(
-    "linear",
+    "cosine",
     optimizer=optimizer,
-    num_warmup_steps=0,
+    num_warmup_steps= int(0.1 * epoch * len(train)),
     num_training_steps=epoch * len(train)
 )
 
@@ -61,7 +61,3 @@ for e in range(epoch):
     optimizer.step()
     lr_scheduler.step()
     optimizer.zero_grad()
-
-# Guardar el modelo y procesador
-model.save_pretrained("./blip-clothes-image-captioning-model")
-processor.save_pretrained("./blip-clothes-image-captioning-processor")
